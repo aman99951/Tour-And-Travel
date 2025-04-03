@@ -1,0 +1,36 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="https://cdn.ckeditor.com/ckeditor5/32.0.0/classic/ckeditor.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fieldId = "id_value";  // Specify the field's ID to initialize CKEditor
+            const editor = ClassicEditor.create(document.querySelector("#" + fieldId), {
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'blockQuote', 'link', 'code', '|',
+                    'insertTable', 'mediaEmbed', '|',
+                    'undo', 'redo'
+                ],
+                height: 600
+            }).catch(error => {
+                console.error("Error initializing CKEditor: ", error);
+            });
+        });
+    </script>
+    <style> .ck-editor__editable {
+        color: black !important;
+    }
+    form .aligned ul li {
+            list-style: inside;
+            color: black;
+            position: relative;
+            left: -164px;
+        }
+
+    </style>
+{% endblock %}

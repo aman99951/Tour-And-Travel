@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-8 mb-3">
+    <nav class="mb-4">
+        <ul class="nav nav-pills justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'profile_view' %}">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'order_page' %}">Orders</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'invoice_page' %}">Invoices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'create_ticket' %}">HelpDesk</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_chat_request' %}">Live Chat</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="m-4">
+                    <h4 class="card-title mb-4 text-center font-weight-bold text-primary" 
+                        style="font-size: 2rem; letter-spacing: 2px;">
+                        Your Invoices
+                    </h4>
+
+                    {% if invoices %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-light">
+                                    <tr style="color: black;">
+                                        <th>Invoice ID</th>
+                                        <th>Order ID</th>
+                                        <th>Invoice Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for invoice in invoices %}
+                                        <tr style="color: black;">
+                                            <td>{{ invoice.id }}</td>
+                                            <td>{{ invoice.order.id }}</td>
+                                            <td>{{ invoice.invoice_date }}</td>
+                                            <td>₹{{ invoice.total_amount }}</td>
+                                            <td>{{ invoice.status }}</td>
+                                            <td>
+                                                <a href="{% url 'invoice_detail' invoice.id %}" class="btn btn-sm btn-primary">
+                                                    View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center" style="font-size: 1.3rem; color: #E74C3C; font-weight: bold;">
+                            You have no invoices yet.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

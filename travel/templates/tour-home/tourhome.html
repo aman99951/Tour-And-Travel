@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- sidebar + content -->
+<section class="">
+  <div class="container">
+    <div class="row">
+      <!-- sidebar -->
+      <div class="col-lg-3">
+        <!-- Toggle button for small screens -->
+        <button
+            class="btn btn-outline-secondary mb-3 w-100 d-lg-none"
+            type="button"
+            id="showFilterBtn"
+            aria-controls="filterPanel"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span>Show Filter</span>
+        </button>
+    
+        <!-- Filter panel -->
+        <div id="filterPanel" class="collapse card d-lg-block mb-5">
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button
+                            class="accordion-button text-dark bg-light"
+                            type="button"
+                            data-mdb-toggle="collapse"
+                            data-mdb-target="#panelsStayOpen-collapseOne"
+                            aria-expanded="true"
+                            aria-controls="panelsStayOpen-collapseOne"
+                        >
+                            Categories
+                        </button>
+                    </h2>
+                
+                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                        <div class="accordion-body">
+                            <form id="categoryFilterForm" action="" method="get">
+                                <div class="form-group">
+                                    <label for="categorySelect">Select Categories</label>
+                                    <select class="form-select" name="category" id="categorySelect">
+                                        <option value="">-- Select a category --</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.id }}" {% if category.id|stringformat:"s" in selected_categories %}selected{% endif %}>
+                                                {{ category.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 mt-2">Filter</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFilterDaysNights">
+                        <button
+                            class="accordion-button text-dark bg-light"
+                            type="button"
+                            data-mdb-toggle="collapse"
+                            data-mdb-target="#collapseFilterDaysNights"
+                            aria-expanded="true"
+                            aria-controls="collapseFilterDaysNights"
+                        >
+                            Filter by Days or Nights
+                        </button>
+                    </h2>
+                
+                    <div id="collapseFilterDaysNights" class="accordion-collapse collapse show" aria-labelledby="headingFilterDaysNights">
+                        <div class="accordion-body">
+                            <form id="daysNightsFilterForm" action="" method="get">
+                                <!-- Filter Type Selection -->
+                                <div class="mb-3">
+                                    <label for="filter_type" class="form-label">Filter By</label>
+                                    <select name="filter_type" id="filter_type" class="form-select" onchange="this.form.submit();">
+                                        <option value="days" {% if filter_type == 'days' %}selected{% endif %}>Number of Days</option>
+                                        <option value="nights" {% if filter_type == 'nights' %}selected{% endif %}>Number of Nights</option>
+                                    </select>
+                                </div>
+                
+                                <!-- Number Input -->
+                                <div class="mb-3">
+                                    <label for="number" class="form-label">Number</label>
+                                    <input type="number" name="number" id="number" class="form-control" placeholder="Enter number" value="{{ number }}">
+                                </div>
+                
+                                <button type="submit" class="btn btn-primary w-100 mt-2">Filter</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add this script to handle the show/hide toggle functionality -->
+ 
+    
+      <!-- sidebar -->
+      <!-- content -->
+      <div class="col-lg-9">
+        <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
+            <strong class="d-block py-2">{{ tours.paginator.count }} Items found</strong>
+            <div class="ms-auto">
+                <form id="filterForm" method="get" action="">
+                    <select id="productFilter" class="form-select d-inline-block w-auto border pt-1" name="filter" onchange="this.form.submit()">
+                        <option value="1" {% if selected_filter == '1' %}selected{% endif %}>Featured</option>
+                        <option value="2" {% if selected_filter == '2' %}selected{% endif %}>New Arrivals</option>
+                        <option value="3" {% if selected_filter == '3' %}selected{% endif %}>Clearance Sale</option>
+                        <option value="4" {% if selected_filter == '4' %}selected{% endif %}>All Tours</option>
+                    </select>
+                    <div class="btn-group shadow-0 border" role="group" aria-label="View Toggle">
+                        <a href="#" class="btn" style="color: #3011BC;" title="List view" id="listViewBtn">
+                            <i class="fa fa-bars fa-lg"></i>
+                        </a>
+                        <a href="#" class="btn" style="color: #3011BC;" title="Grid view" id="gridViewBtn">
+                            <i class="fa fa-th fa-lg"></i>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </header>
+        
+       
+        
+
+
+        <div class="product-container">
+            <div class="row list-view" >
+                {% for tour in tours %}
+                <div class="col-md-12 mb-3">
+                    <div class="card shadow-0 border rounded-3">
+                        <div class="card-body">
+                            <div class="row g-0">
+                                <!-- Display the first photo of the tour -->
+                                <div class="col-xl-3 col-md-4 d-flex justify-content-center">
+                                    <div class="bg-image hover-zoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0">
+                                        {% if tour.photos.exists %}
+                                        <img src="{{ tour.photos.first.image.url }}" alt="{{ tour.short_description }}" width="150" height="100px">
+                                        {% else %}
+                                        <img src="{% static 'images/default-tour.jpg' %}" alt="Default Image" width="150" height="100px">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Tour details -->
+                                <div class="col-xl-6 col-md-5 col-sm-7">
+                                    <h5>{{ tour.short_description }}</h5>
+                                    <p class="text mb-4 mb-md-0">{{ tour.long_description|truncatechars:150 }}</p>
+                                    <div class="d-flex flex-row mt-2 mb-1">
+                                        <span class="badge  me-2" style="background-color: rgb(255, 115, 0);">Days: {{ tour.number_of_days }}</span>
+                                        <span class="badge " style="background-color: rgb(255, 115, 0);">Nights: {{ tour.number_of_nights }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tour actions -->
+                                <div class="col-xl-3 col-md-3 col-sm-5">
+                                    <p class="mb-1" style="font-size: small; font-weight: bolder;"><span  style="font-size: small;" class="nav-link-icon text-800 me-1 fas fa-map-marker-alt"></span>Departure: {{ tour.departure_city }}</p>
+                                    <a href="{% url 'view_tour' tour.id %}" class="btn btn-primary">View Tour</a>
+                                    {% if tour.feature %}
+                                    <span class="badge bg-success mt-2">Featured</span>
+                                    {% endif %}
+                                    
+                                    <p class="mt-2" style="font-size: small; font-weight: bold; color: #FE7A15;">
+                                        Starting from ₹{{ tour.min_price }}
+                                    </p>
+                                   
+        
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No tours found.</p>
+                {% endfor %}
+            </div>
+
+            <div class="row grid-view" style="display: none;">
+                {% for tour in tours %}
+                <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
+                    <div class="card w-100 my-2 shadow-2-strong">
+                        <!-- Display the first photo of the tour -->
+                        {% if tour.photos.all %}
+                        <img src="{{ tour.photos.first.image.url }}" class="card-img-top product-img" alt="{{ tour.short_description }}" height="200px">
+                        {% else %}
+                        <p>No image</p>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ tour.short_description }}</h5>
+                            <p class="card-text">{{ tour.long_description|truncatechars:100 }}</p> <!-- Limit description length -->
+                            <div class="d-flex flex-row mt-2 mb-1">
+                                <span class="badge  me-2" style="background-color: rgb(255, 115, 0);">Days: {{ tour.number_of_days }}</span>
+                                <span class="badge " style="background-color: rgb(255, 115, 0);">Nights: {{ tour.number_of_nights }}</span>
+                            </div>
+                            <div class="d-flex flex-row">
+                                <p style="font-size: small;font-weight: bolder;"  class="mb-1 me-1"><span style="font-size: small;" class="nav-link-icon text-800 me-1  fas fa-map-marker-alt"></span>Departure: {{ tour.departure_city }}</p>
+                                
+                            </div>
+                            
+                            
+                            <!-- Display number of days and nights -->
+                           
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <a href="{% url 'view_tour' tour.id %}" class="btn btn-primary btn-sm shadow-sm">View Tour</a>
+                                {% if tour.feature %}
+                                <span class="badge bg-success">Featured</span>
+                                {% endif %}
+                               
+                            </div>
+                            <div class="price-tag text-end ms-auto">
+                                <span  class="mt-2" style="font-size: small; font-weight: bold; color: #FE7A15;">
+                                    Starting from ₹{{ tour.min_price }}</span>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No tours found.</p>
+                {% endfor %}
+            </div>
+        
+            
+        </div>
+        
+
+        
+        
+      
+        <hr />
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <!-- First and Previous links -->
+                    {% if tours.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">&laquo; First</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ tours.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">Previous</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Current page and total pages -->
+                    <li class="page-item disabled">
+                        <span class="page-link">Page {{ tours.number }} of {{ tours.paginator.num_pages }}</span>
+                    </li>
+                    
+                    <!-- Next and Last links -->
+                    {% if tours.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ tours.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">Next</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ tours.paginator.num_pages }}" aria-label="Last">
+                                <span aria-hidden="true">Last &raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        
+      
+        <!-- Pagination -->
+      </div>
+    </div>
+  </div>            
+</section>
+
+<style>
+  .pagination-wrapper {
+    margin: 20px 0;
+}
+
+.pagination {
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.page-item {
+    margin: 0 5px;
+}
+
+.page-link {
+    color: #3011BC ; /* Bootstrap primary color */
+    padding: 10px 15px;
+    border: 1px solid #3011BC ;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.page-link:hover {
+    background-color: #3011BC ;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    background-color: #f8f9fa; /* Light grey for disabled state */
+    color: #6c757d; /* Grey color */
+    border: 1px solid #dee2e6; /* Light border */
+}
+
+.page-item.active .page-link {
+    background-color: #3011BC ; /* Bootstrap primary color */
+    color: white;
+}
+            /* Apply hover color to the select element */
+            #productFilter:hover {
+                background-color: #3011BC;
+                color: white;
+            }
+        
+            /* Apply hover color to the options within the select element */
+            #productFilter option:hover {
+                background-color: #3011BC;
+                color: white;
+            }
+            
+      
+
+</style>
+<script>
+  function submitPriceFilterForm() {
+      const maxPriceInput = document.getElementById('maxPrice');
+      if (maxPriceInput.value) { // Check if max price is set
+          document.getElementById('priceFilterForm').submit(); // Submit the form
+      }
+  }
+  </script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const listViewBtn = document.getElementById("listViewBtn");
+    const gridViewBtn = document.getElementById("gridViewBtn");
+    const productContainer = document.querySelector(".product-container");
+
+    listViewBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      productContainer.querySelector(".grid-view").style.display = "none";
+      productContainer.querySelector(".list-view").style.display = "block";
+      listViewBtn.classList.add("active");
+      gridViewBtn.classList.remove("active");
+    });
+
+    gridViewBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      productContainer.querySelector(".grid-view").style.display = "flex";
+      productContainer.querySelector(".list-view").style.display = "none";
+      gridViewBtn.classList.add("active");
+      listViewBtn.classList.remove("active");
+    });
+  });
+</script>
+
+
+<script>
+    // Get all buttons in the button group
+    const buttons = document.querySelectorAll('.btn-group .btn');
+
+    // Add click event listeners to each button
+    buttons.forEach(button => {
+        button.addEventListener('click', function(event) {
+            // Prevent default action
+            event.preventDefault();
+
+            // Remove 'active' class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Add 'active' class to the clicked button
+            this.classList.add('active');
+        });
+    });
+</script>
+<script>
+    document.getElementById('showFilterBtn').addEventListener('click', function () {
+        var filterPanel = document.getElementById('filterPanel');
+        var isExpanded = filterPanel.classList.contains('show');
+
+        // Toggle the collapse behavior manually
+        if (isExpanded) {
+            filterPanel.classList.remove('show');
+        } else {
+            filterPanel.classList.add('show');
+        }
+    });
+</script>
+
+{% endblock %}

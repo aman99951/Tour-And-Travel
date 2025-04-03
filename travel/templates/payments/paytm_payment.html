@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Razorpay Payment{% endblock %}
+
+{% block content %}
+<!-- templates/payments/paytm_payment.html -->
+<form method="POST" action="https://secure.paytm.in/theia/processTransaction" name="paytm_form">
+    {% csrf_token %}
+    {% for key, value in paytm_params.items %}
+        <input type="hidden" name="{{ key }}" value="{{ value }}" />
+    {% endfor %}
+    <input type="submit" value="Pay Now" />
+</form>
+
+<script type="text/javascript">
+    document.forms['paytm_form'].submit();
+</script>
+{%endblock%}

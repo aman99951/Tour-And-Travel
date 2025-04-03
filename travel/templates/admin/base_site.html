@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+
+{% block user_dropdown %}
+  {{ block.super }} {# Keeps existing user dropdown content #}
+  
+  <h1>Second Admin Panel</h1>
+
+  <a href="/admin/" target="_blank" 
+  style="color: white; font-weight: bold; padding: 6px 10px;border-radius: 5px; text-decoration: none; display: inline-block;">
+   ⬅️ Back to Main Admin
+</a>
+
+{% endblock %}

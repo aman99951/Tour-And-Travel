@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-8">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-9">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="m-4">
+                    <h4 class="card-title mb-4 text-center font-weight-bold text-primary" style="font-size: 2rem; letter-spacing: 2px;">Your Shopping Cart</h4>
+
+                    <!-- Cart Items -->
+                    {% for item in cart_items %}
+                    <div class="row gy-4 mb-4 align-items-center border-bottom pb-3">
+                        <div class="col-lg-5">
+                            <div class="d-flex">
+                                {% if item.tour_photo and item.tour_photo.image %}
+                                <img src="{{ item.tour_photo.image.url }}" class="border rounded-circle me-3" style="width: 90px; height: 90px; object-fit: cover;" />
+                                {% endif %}
+                                <div>
+                                    <a href="#" class="nav-link text-dark font-weight-bold" style="font-size: 1.1rem; color: #2C3E50;">{{ item.tour.short_description }}</a>
+                                    <p class="text-muted" style="font-size: 0.95rem;">{{ item.tour.description }}</p>
+                                    <p class="text-muted" style="font-size: 0.95rem;">Class: <span class="font-weight-bold" style="color: #8E44AD;">{{ item.t_class.name }}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-sm-6">
+                            <div>
+                                <small class="font-weight-bold" style="font-size: 1rem; color: #FE7A15;">
+                                    {% if item.adult_price %}
+                                    ₹{{ item.adult_price }} / per person <span class="text-primary">(Adult Price)</span>
+                                    {% elif item.twin_sharing_price %}
+                                    ₹{{ item.twin_sharing_price }} / per person <span class="text-primary">(Twin Sharing Price)</span>
+                                    {% elif item.extra_price %}
+                                    ₹{{ item.extra_price }} / per person <span class="text-primary">(Extra Adult Price)</span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 text-center">
+                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                <a href="{% url 'decrease_quantity' item.id %}" class="btn btn-outline-secondary btn-sm px-3 py-2" title="Decrease Quantity">-</a>
+                                <span class="font-weight-bold" style="font-size: 1.2rem;">{{ item.quantity }}</span>
+                                <a href="{% url 'increase_quantity' item.id %}" class="btn btn-outline-secondary btn-sm px-3 py-2" title="Increase Quantity">+</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 text-end">
+                            <div class="d-flex gap-3 justify-content-end">
+                                <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-danger border-0 text-white px-3 py-2" title="Remove from Cart" style="font-weight: bold;">
+                                    <i class="fas fa-trash-alt"></i> 
+                                </a>
+                                <!-- Inquiry Button (Optional) -->
+                                <!-- <button type="button" class="btn btn-info text-white px-3 py-2">Inquire</button> -->
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-center" style="font-size: 1.3rem; color: #E74C3C; font-weight: bold;">Your cart is empty.</p>
+                    {% endfor %}
+
+                    <!-- Total and Checkout -->
+                    {% if cart_items %}
+                    <div class="border-top pt-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="font-weight-bold" style="font-size: 1.5rem; color: #2C3E50;">Total Price: ₹{{ total_price }}</h5>
+                        </div>
+                        <a href="{% url 'checkout' %}" class="btn  btn-lg w-100 mt-3" style="font-weight: bold; padding: 15px 20px; font-size: 1.2rem; background: #E74C3C; color: white;">
+                            Proceed to Checkout
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

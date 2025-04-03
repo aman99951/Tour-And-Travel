@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PhonePe Payment</title>
+  <!-- Optionally include Bootstrap for styling -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script>
+    // Auto-redirect after 5 seconds
+    window.onload = function(){
+      setTimeout(function(){
+        window.location.href = "{{ payment_url }}";
+      }, 5000);
+    };
+  </script>
+</head>
+<body>
+  <div class="container mt-5">
+    <h2>Proceed with PhonePe Payment</h2>
+    <p>Order ID: <strong>{{ order_id }}</strong></p>
+    <p>Amount: INR <strong>{{ amount }}</strong></p>
+    <p>You will be automatically redirected to the PhonePe payment page in 5 seconds.</p>
+    <p>If not redirected, click the button below:</p>
+    <a href="{{ payment_url }}" class="btn btn-success">Pay Now</a>
+  </div>
+</body>
+</html>

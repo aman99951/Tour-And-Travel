@@ -1,0 +1,66 @@
+{% extends 'admin/base_site.html' %}
+
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center text-light">Ticket: {{ ticket.subject }}</h2>
+    
+    <div class="card">
+        <div class="card-header" style="background-color: black; color: #ffffff;">
+            <h5>{{ ticket.subject }}</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Department:</strong> {{ ticket.deparment }}</p>
+            <p><strong>Description:</strong> {{ ticket.description }}</p>
+            <p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+            <p><small><strong>Created At:</strong> {{ ticket.created_at|date:"Y-m-d" }}</small></p>
+        </div>
+
+        <!-- Attachments section -->
+        <div class="card-body">
+            <h6><strong>Attachment:</strong></h6>
+            {% if ticket.attachments %}
+                <p><a href="{{ ticket.attachments.url }}" download>{{ ticket.attachments.name }}</a></p>
+            {% else %}
+                <p>No attachments.</p>
+            {% endif %}
+        </div>
+
+        <!-- Chat section -->
+        <div class="card-footer">
+            <h6>Messages:</h6>
+            <ul class="list-unstyled">
+                {% for reply in replies %}
+                <li class="{% if reply.agent %} agent-message {% else %} user-message {% endif %}">
+                    <strong>{{ reply.created_at|date:"Y-m-d H:i" }}:</strong>
+                    {% if reply.agent %}
+                        <span class="text-success">Agent:</span>
+                    {% else %}
+                        <span class="text-primary">User:</span>
+                    {% endif %}
+                    {{ reply.message }}
+                </li>
+                {% empty %}
+                <li>No messages yet.</li>
+                {% endfor %}
+            </ul>
+
+            {% if ticket.status != 'Closed' %}
+            <!-- Message Form -->
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.message }}
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Send Message</button>
+            </form>
+            {% elif error %}
+            <p class="text-danger">{{ error }}</p>
+            {% else %}
+            <p class="text-danger">This ticket is closed. No further messages can be sent.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="https://cdn.ckeditor.com/ckeditor5/32.0.0/classic/ckeditor.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            
+            let editors = {};  // Store CKEditor instances
+
+            // Function to initialize CKEditor for textareas inside dynamic fields
+            const initCKEditor = function () {
+                document.querySelectorAll(".dynamic-custom_fields textarea").forEach(field => {
+                    if (!field.classList.contains("ckeditor-initialized")) {
+                        field.style.display = "block";  // Ensure visibility
+
+                        ClassicEditor.create(field)
+                            .then(editor => {
+                                editors[field.name] = editor; // Store instance using field name
+                                console.log(`CKEditor initialized for: ${field.name}`);
+
+                                // Sync CKEditor data before form submission
+                                document.querySelector("form").addEventListener("submit", function () {
+                                    field.value = editor.getData();
+                                });
+                            })
+                            .catch(error => console.error(`CKEditor error for ${field.name}:`, error));
+
+                        field.classList.add("ckeditor-initialized"); // Prevent re-initialization
+                    }
+                });
+            };
+
+            window.addEventListener("load", function () {
+            console.log("Page loaded. Re-initializing CKEditor...");
+            setTimeout(initCKEditor, 200);
+        });
+
+            // Observe dynamically added fields inside ".dynamic-custom_fields"
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === 1 && node.matches(".dynamic-custom_fields")) {
+                            console.log("New dynamic-custom_fields row detected. Initializing CKEditor...");
+                            setTimeout(initCKEditor, 100); // Ensure elements are fully loaded
+                        }
+                    });
+                });
+            });
+
+            // Observe the parent container where dynamic fields are added
+            const formsetContainer = document.querySelector('.inline-group');
+            if (formsetContainer) {
+                observer.observe(formsetContainer, { childList: true, subtree: true });
+            }
+
+            // Hide the extra field initially
+            const extraFieldContainer = document.querySelector(".extra-one-field");
+            if (extraFieldContainer) {
+                extraFieldContainer.style.display = "none";
+            }
+
+            // Show the extra field and initialize CKEditor when clicking "Add one more field"
+            const addButton = document.querySelector(".add-row a");
+            if (addButton) {
+                addButton.addEventListener("click", function (event) {
+                    setTimeout(() => {
+                        if (extraFieldContainer) {
+                            extraFieldContainer.style.display = "block"; // Show extra field
+                            initCKEditor(); // Initialize CKEditor for the new field
+                        }
+                    }, 200);
+                });
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let predefinedEditors = {}; // Store CKEditor instances for predefined fields
+
+            // Fields with predefined IDs
+            const predefinedFields = [
+                "id_itinerary",
+                "id_includes",
+                "id_excludes",
+                "id_cancellation_policy",
+                "id_notes"
+            ];
+
+            // Function to initialize CKEditor for predefined fields
+            const initPredefinedCKEditor = function () {
+                predefinedFields.forEach(fieldId => {
+                    document.querySelectorAll(`#${fieldId}`).forEach(field => {
+                        if (!field.classList.contains("ckeditor-initialized")) {
+                            field.style.display = "block"; // Ensure visibility
+
+                            ClassicEditor.create(field)
+                                .then(editor => {
+                                    predefinedEditors[field.id] = editor; // Store instance using field ID
+                                    console.log(`CKEditor initialized for: ${field.id}`);
+
+                                    // Sync CKEditor data before form submission
+                                    document.querySelector("form").addEventListener("submit", function () {
+                                        field.value = editor.getData();
+                                    });
+                                })
+                                .catch(error => console.error(`CKEditor error for ${field.id}:`, error));
+
+                            field.classList.add("ckeditor-initialized"); // Prevent re-initialization
+                        }
+                    });
+                });
+            };
+
+            // Initialize CKEditor for predefined fields on page load
+            initPredefinedCKEditor();
+        });
+    </script>
+
+    <style>
+        .ck-editor__editable {
+            color: black !important;
+        }
+
+        form .aligned ul li {
+            list-style: inside;
+            color: black;
+            position: relative;
+            left: -164px;
+        }
+
+        /* Hide the extra field initially */
+        .extra-one-field {
+            display: none;
+        }
+    </style>
+{% endblock %}

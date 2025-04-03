@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Complete Your Razorpay Payment</h2>
+<button id="rzp-button1">Pay with Razorpay</button>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "{{ razorpay_key }}",
+        "amount": "{{ order.amount }}",
+        "currency": "INR",
+        "name": "Advance Payment",
+        "order_id": "{{ order.id }}",
+        "callback_url": "{% url 'payment_success' %}"
+    };
+    var rzp1 = new Razorpay(options);
+    document.getElementById("rzp-button1").onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    };
+</script>
+{% endblock %}

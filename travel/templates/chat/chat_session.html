@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-8 chat-container">
+    <h4 class="text-center py-3" style="color: #0b64c3;">Live Chat Support</h4>
+
+    <!-- Chat Box -->
+    <div class="chat-box p-3" id="chat-box">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message mb-3 {% if message.sender == user %}my-message{% else %}other-message{% endif %}">
+                    <div class="message-content p-3 shadow">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge badge-info mr-2">
+                                {% if message.sender %}
+                                    {{ message.sender.first_name }}
+                                {% else %}
+                                    {{ message.session.guest_name }}
+                                {% endif %}
+                            </span>
+                            <span class="small text-white">{{ message.timestamp|date:"H:i" }}</span>
+                        </div>
+                        <p class="message-text">{{ message.message }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <!-- If there are no messages, display a waiting message -->
+            <div class="waiting-message">
+                <p class="text-center text-white">Please wait, the agent is connecting...</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Message Input -->
+    <form method="POST" class="message-form mt-4">
+        {% csrf_token %}
+        <div class="input-group">
+            <textarea name="message" style="height: 40px; border-radius: 20px; background-color: #444; color: white;" class="form-control shadow" placeholder="Type your message here..." required></textarea>
+            <div class="input-group-append">
+                <button type="submit" class="btn btnn-primary shadow">
+                    <i class="bi bi-send"></i> 
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const chatBox = document.querySelector("#chat-box");
+    const messageForm = document.querySelector(".message-form");
+    const messageInput = messageForm.querySelector("textarea");
+
+    // Function to fetch messages
+    async function fetchMessages() {
+        try {
+            const response = await fetch(window.location.href, {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+            const data = await response.json();
+
+            // Clear the chat box and re-render the messages
+            chatBox.innerHTML = "";
+
+            if (data.messages.length === 0) {
+                // Show waiting message if no messages
+                const waitingMessage = document.createElement("div");
+                waitingMessage.classList.add("waiting-message");
+                waitingMessage.innerHTML = "<p class='text-center text-white'>Please wait, the agent is connecting...</p>";
+                chatBox.appendChild(waitingMessage);
+            }
+
+            let lastMessageFromAgent = false;
+            data.messages.forEach((msg, index) => {
+                const messageDiv = document.createElement("div");
+                messageDiv.classList.add("message", msg.sender === "{{ user.first_name }}" ? "my-message" : "other-message");
+
+                const messageContentDiv = document.createElement("div");
+                messageContentDiv.classList.add("message-content", "p-3", "shadow");
+
+                const messageHeader = document.createElement("div");
+                messageHeader.classList.add("d-flex", "align-items-center", "mb-2");
+
+                const senderBadge = document.createElement("span");
+                senderBadge.classList.add("badge", "badge-info", "mr-2");
+                senderBadge.textContent = msg.sender || 'Guest';
+
+                const timestamp = document.createElement("span");
+                timestamp.classList.add("small", "text-white");
+                timestamp.textContent = msg.timestamp;
+
+                const messageText = document.createElement("p");
+                messageText.classList.add("message-text");
+                messageText.textContent = msg.message;
+
+                messageHeader.appendChild(senderBadge);
+                messageHeader.appendChild(timestamp);
+                messageContentDiv.appendChild(messageHeader);
+                messageContentDiv.appendChild(messageText);
+
+                messageDiv.appendChild(messageContentDiv);
+                chatBox.appendChild(messageDiv);
+
+                // Check if the last message was from the agent
+                if (msg.sender !== "{{ user.first_name }}") {
+                    lastMessageFromAgent = true;
+                }
+
+                // After the agent's message, show a recommendation
+                if (lastMessageFromAgent && index === data.messages.length - 1) {
+                    const recommendationDiv = document.createElement("div");
+                    recommendationDiv.classList.add("message", "my-message");
+
+                    const recommendationContentDiv = document.createElement("div");
+                    recommendationContentDiv.classList.add("message-content", "p-3", "shadow");
+
+                    const recommendationText = document.createElement("p");
+                    recommendationText.classList.add("message-text");
+                    recommendationText.textContent = "We recommend you check our help guide or FAQ section for further assistance.";
+
+                    recommendationContentDiv.appendChild(recommendationText);
+                    recommendationDiv.appendChild(recommendationContentDiv);
+                    chatBox.appendChild(recommendationDiv);
+                }
+            });
+
+            // Scroll to the bottom of the chat box
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+        } catch (error) {
+            console.error("Error fetching messages:", error);
+        }
+    }
+
+    // Handle message form submission
+    messageForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const message = messageInput.value.trim();
+        if (!message) return; // Don't submit empty messages
+
+        const formData = new FormData(messageForm);
+        try {
+            await fetch(window.location.href, { method: "POST", body: formData });  // Send the message via POST
+            messageInput.value = "";  // Clear input field after sending
+            fetchMessages();  // Fetch and update chat
+        } catch (error) {
+            console.error("Error submitting message:", error);
+        }
+    });
+
+    // Set an interval to fetch messages every 2 seconds
+    setInterval(fetchMessages, 2000);
+    fetchMessages();  // Initial fetch of messages when the page loads
+});
+
+</script>
+
+<!-- Custom CSS -->
+<style>
+    /* Chat Container */
+    .chat-container {
+        max-width: 700px;
+        margin: 30px auto;
+        background: linear-gradient(135deg, #121212, #1A1A1D);
+        border-radius: 20px;
+        overflow-y: hidden;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        color: #f5f5f5;
+        padding: 25px;
+    }
+
+    /* Waiting Message */
+    .waiting-message {
+        background: #333;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    /* Chat Box with Scrollbar Customization */
+    .chat-box {
+        height: 300px;
+        overflow-y: auto;
+        background: #101010;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #444;
+    }
+
+    /* Scrollbar Styling */
+    .chat-box::-webkit-scrollbar {
+        width: 10px; /* Width of the scrollbar */
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+        background-color: #888; /* Scrollbar thumb color */
+        border-radius: 10px; /* Rounded corners */
+        border: 3px solid #101010; /* Border around the thumb */
+    }
+
+    .chat-box::-webkit-scrollbar-track {
+        background: #333; /* Track color */
+        border-radius: 10px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb:hover {
+        background-color: #555; /* Darker thumb on hover */
+    }
+
+    .chat-box::-webkit-scrollbar-track:hover {
+        background: #444; /* Darker track on hover */
+    }
+
+    .chat-box::-webkit-scrollbar:hover {
+        width: 12px; /* Hover width of the scrollbar */
+    }
+
+    /* Message Styling */
+    .message {
+        display: flex;
+        margin-bottom: 15px;
+        align-items: flex-start;
+    }
+
+    .my-message {
+        justify-content: flex-end;
+        text-align: right;
+    }
+
+    .other-message {
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .message-content {
+        max-width: 75%;
+        border-radius: 15px;
+        padding: 15px;
+        font-size: 15px;
+        background: linear-gradient(145deg, #262626, #383838);
+        box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.2), -6px -6px 12px rgba(255, 255, 255, 0.1);
+        color: #e0e0e0;
+    }
+
+    .my-message .message-content {
+        background: linear-gradient(145deg, #007BFF, #0056b3);
+        color: #fff;
+    }
+
+    .other-message .message-content {
+        background: linear-gradient(145deg, #3d3d3d, #282223);
+        color: #fff;
+    }
+
+    .badge-info {
+        background-color: #FFD700;
+        color: #333;
+        border-radius: 12px;
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    /* Message Input Area */
+    textarea {
+        background: #1A1A1D;
+        color: #f5f5f5;
+        border: 1px solid #333;
+        resize: none;
+    }
+
+    .btnn-primary {
+        background: linear-gradient(145deg, #0056b3, #FFC107);
+        border-color: transparent;
+        border-radius: 20px;
+        padding: 5px 20px;
+        color: white;
+        box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2), -3px -3px 8px rgba(255, 255, 255, 0.1);
+    }
+
+    .btnn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3), -4px -4px 10px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Style for input area */
+    .input-group {
+        position: relative;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .form-control:focus {
+        border-color: #0056b3;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+    }
+
+    /* Style for submit button */
+    .input-group-append button {
+        background: linear-gradient(145deg, #007BFF, #0056b3);
+        border-radius: 50%;
+        border: none;
+        padding: 10px 15px;
+    }
+</style>
+{% endblock %}

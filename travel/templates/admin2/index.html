@@ -1,0 +1,18 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+  <!-- ✅ Add the card before the default admin dashboard content -->
+  <div class="card mt-4" style="height: 80px; width: 100%;">
+    <div class="card-body text-center">
+      
+      <a href="/admin/" target="_blank"
+         style="color: white; font-weight: bold; padding: 6px 10px; border-radius: 5px;
+                text-decoration: none; display: inline-block; background: #007bff;">
+        ⬅️ Back to Main Admin
+      </a>
+    </div>
+  </div>
+
+  <!-- 🛑 Ensure the default dashboard content appears after -->
+  {{ block.super }}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+  {% if request.path == "/admin/" %}  {# ✅ Show only in Main Admin #}
+  <div class="card mt-4" style="height: 80px; width: 100%;">
+      <div class="card-body text-center">
+       
+        <a href="{% url 'admin2:index' %}" class="btn btn-primary" target="_blank">
+          🚀 Check Inquiry and Problems
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+  {{ block.super }}
+{% endblock %}

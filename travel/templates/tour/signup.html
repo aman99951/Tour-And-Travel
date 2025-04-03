@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+<!-- Section with background image -->
+<section class="py-7 overflow-hidden container">
+  <div class="row justify-content-center align-items-center">
+    <!-- Left Section: Signup Form (70% width) -->
+    <div class="col-md-8">
+        <h3 class="display-4 text-1000 fw-normal">Let’s create Your Account</h3>
+        <h1 class="display-3 text-primary fw-bold text-start">Signup</h1>
+      <form method="POST" class="p-4 border rounded shadow-sm">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+        
+        <!-- First Row of Fields (3 fields per row) -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.email.id_for_label }}">Email</label>
+              {{ form.email }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.password.id_for_label }}">Password</label>
+              {{ form.password }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+              {{ form.confirm_password }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Second Row of Fields (3 fields per row) -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.mobile_number.id_for_label }}">Mobile Number</label>
+              {{ form.mobile_number }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Mailing Address Section -->
+        <h4 class="mt-4">Mailing Address</h4>
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.title.id_for_label }}">Title</label>
+              {{ form.title }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.first_name.id_for_label }}">First Name</label>
+              {{ form.first_name }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+              {{ form.last_name }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.address.id_for_label }}">Address</label>
+              {{ form.address }}
+            </div>
+          </div>
+       
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.city.id_for_label }}">City</label>
+              {{ form.city }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.pincode.id_for_label }}">Postal Code</label>
+              {{ form.postal_code }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.country.id_for_label }}">Country</label>
+              {{ form.country }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.country.id_for_label }}">Country of Passport</label>
+              {{ form.country_of_passport }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.country.id_for_label }}">Landline Number</label>
+              {{ form.landline_number }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Company Address Section -->
+        <h4 class="mt-4">Company Address (Optional)</h4>
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.company_address.id_for_label }}">Company Address</label>
+              {{ form.company_address }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.company_city.id_for_label }}">Company City</label>
+              {{ form.company_city }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.company_state.id_for_label }}">Company State</label>
+              {{ form.company_state }}
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.company_postal_code.id_for_label }}">Company Postal Code</label>
+              {{ form.company_postal_code }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="{{ form.company_country.id_for_label }}">Company Country</label>
+              {{ form.company_country }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <h4 class="mt-4">Terms and Conditions</h4>
+        <div class=" form-check">
+          {{ form.agree_terms }} 
+          <label class="form-check-label" for="{{ form.agree_terms.id_for_label }}">I agree to the Terms and Conditions</label>
+        </div>
+
+        <div class="form-check">
+          {{ form.over_18 }} 
+          <label class="form-check-label" for="{{ form.over_18.id_for_label }}">I am over 18 years of age</label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block mt-4">Sign Up</button>
+
+        <div class="text-center mt-4">
+          <p class="fw-bold">Create your account</p>
+          <div class="d-flex justify-content-center">
+            <a href="#" class="btn  me-1" style=" border-radius: 50%;">
+              <img src="https://pngimg.com/uploads/google/google_PNG19635.png" alt="Google" style="width: 30px; height: 30px;">
+            </a>
+            <a href="#" class="btn me-1" style=" border-radius: 50%;">
+              <img src="https://www.ssv.hr/design/i-facebook.png" alt="Facebook" style="width: 30px; height: 30px;">
+            </a>
+            <a href="#" class="btn" style="border-radius: 50%;">
+              <img src="https://tse4.mm.bing.net/th?id=OIP.15ipuSMoMDBxDjoF8w4BQgHaE9&pid=Api&P=0&w=300&h=300" alt="Twitter" style="width: 30px; height: 30px;">
+            </a>
+          </div>
+        </div>
+      </form>
+      
+
+    </div>
+
+    <!-- Right Section: Background Image (30% width) -->
+    <div class="col-md-4" style="background-image: url('/static/assets/img/gallery/hero-section-1.png'); background-size: cover; background-position: center; height: 100vh;">
+    </div>
+  </div>
+</section>
+
+<style>
+    /* Ensures form fields are stacked under the label */
+.form-group label {
+    display: block;
+    font-weight: bold;
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    margin-top: 5px;
+    border: 1px solid #3011BC ;
+    border-radius: 6px;
+}
+.form-group textarea{
+    height: 50px;
+}
+</style>
+{% endblock %}

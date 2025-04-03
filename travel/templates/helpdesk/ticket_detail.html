@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-8">
+    <h2 class="mb-3 text-center text-primary">Ticket Details</h2>
+    
+    <div class="card shadow-lg rounded-4">
+        <!-- Ticket Header -->
+        <div class="card-header bg-primary">
+            <h5 class="mb-0 text-white">{{ ticket.subject }}</h5>
+        </div>
+
+        <!-- Ticket Body -->
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Department:</strong>
+                </div>
+                <div class="col-md-9">
+                    {{ ticket.deparment }}
+                </div>
+            </div>
+        
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Description:</strong>
+                </div>
+                <div class="col-md-9">
+                    {{ ticket.description }}
+                </div>
+            </div>
+        
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Status:</strong>
+                </div>
+                <div class="col-md-9">
+                    <span class="text-primary">{{ ticket.get_status_display }}</span>
+                </div>
+            </div>
+        
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Created At:</strong>
+                </div>
+                <div class="col-md-9">
+                    {{ ticket.created_at|date:"d-m-Y H:i:s" }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Attachments Section -->
+        <div class="card-body bg-light">
+            <h6 class="text-secondary"><strong>Attachments:</strong></h6>
+            {% if ticket.attachments %}
+                <a href="{{ ticket.attachments.url }}" download class="btn btn-link text-decoration-none">
+                    <i class="fas fa-paperclip"></i> {{ ticket.attachments.name }}
+                </a>
+            {% else %}
+                <p class="text-muted">No attachments available.</p>
+            {% endif %}
+        </div>
+
+        <!-- Chat Section -->
+         <!-- Chat Section -->
+<div class="card-footer">
+    <h6 class="text-secondary mb-3"><strong>Messages:</strong></h6>
+    <ul>
+        {% for reply in replies %}
+        <li>
+            <strong>{{ reply.created_at }} - 
+                {% if reply.agent %}
+                    Agent: {{ reply.agent.user.username }}
+                {% else %}
+                  {{ reply.user.username }}
+                {% endif %}
+            </strong>
+            <p>{{ reply.message }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    <!-- Message Form -->
+    {% if ticket.status != 'Closed' %}
+    <form method="POST" class="d-flex flex-column">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.message }}
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Send Message</button>
+    </form>
+    {% elif error %}
+    <p class="text-danger mt-3">{{ error }}</p>
+    {% else %}
+    <p class="text-danger mt-3">This ticket is closed. No further messages can be sent.</p>
+    {% endif %}
+</div>
+
+  
+    </div>
+</div>
+{% endblock %}

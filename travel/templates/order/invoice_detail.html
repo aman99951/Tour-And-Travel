@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Invoice Details: {{ invoice.id }}{% endblock %}
+
+{% block content %}
+<div id="invoice-content" class="container bg-light shadow-sm rounded mt-8 p-5" style="border: 1px solid #ddd; color: black;">
+    <!-- Invoice Header -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2 class="text-primary">Invoice Details</h2>
+            <p><strong>Invoice ID:</strong> {{ invoice.id }}</p>
+            <p><strong>Order ID:</strong> {{ invoice.order.id }}</p>
+            <p><strong>Invoice Date:</strong> {{ invoice_date_ist|date:"Y-m-d H:i:s" }}</p>
+
+        </div>
+        <div class="col-md-6 text-end">
+            <p><strong>Status:</strong> 
+                <span style="color: #FE7A15;">
+                    {{ invoice.status }}
+                </span>
+            </p>
+            <p><strong>Total Amount:</strong> ₹{{ invoice.total_amount }}</p>
+        </div>
+    </div>
+
+    <!-- Order Items Table Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h4 class="text-dark">Order Items</h4>
+            <table class="table table-hover ">
+                <thead style="background-color: #FE7A15; color: white;">
+                    <tr>
+                        <th>Tour</th>
+                        <th>Class</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody style="color: black;">
+                    {% for item in invoice.order.items.all %}
+                    <tr >
+                        <td>{{ item.tour.short_description }}</td>
+                        <td>{{ item.t_class.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.adult_price|default:item.twin_sharing_price|default:item.extra_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Action Buttons Section -->
+    <div class="row mt-4">
+        <div class="col-md-12 text-center">
+            <!-- Optional Action Buttons -->
+        </div>
+    </div>
+
+    <!-- Download PDF Button -->
+    <div class="row mt-5">
+        <div class="col-md-12 text-center">
+            <button onclick="downloadPDF()" class="btn btn-primary btn-lg">Download Invoice as PDF</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add the html2pdf.js library for PDF download functionality -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script>
+    function downloadPDF() {
+        var element = document.getElementById('invoice-content');  // Select the content to convert
+        html2pdf().from(element).set({
+            margin: 1,
+            filename: 'invoice_{{ invoice.id }}.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        }).save();
+    }
+</script>
+{% endblock %}

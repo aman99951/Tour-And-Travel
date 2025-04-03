@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-8 mb-3">
+    <nav class="mb-4">
+        <ul class="nav nav-pills justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'profile_view' %}">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'order_page' %}">Orders</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{% url 'invoice_page' %}">Invoices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'create_ticket' %}">HelpDesk</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_chat_request' %}">Live Chat</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="chat-box p-4 mx-auto shadow-lg rounded">
+        <h2 class="text-center mb-4 text-primary" style="font-weight: bold;">Submit a Ticket</h2>
+        
+        <form method="POST" enctype="multipart/form-data" class="ticket-form" style="color: black;">
+            {% csrf_token %}
+            
+            <!-- Row for Subject and Department -->
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="subject" class="form-label font-weight-bold">Subject:</label>
+                    {{ form.subject }}
+                </div>
+                <div class="col-md-6 form-group">
+                    <label for="deparment" class="form-label font-weight-bold">Department:</label>
+                    {{ form.deparment }}
+                </div>
+            </div>
+            
+            <!-- Row for Description -->
+            <div class="row">
+                <div class="col-12 form-group">
+                    <label for="description" class="form-label font-weight-bold">Description:</label>
+                    {{ form.description }}
+                </div>
+            </div>
+            
+            <!-- Row for Attachments -->
+            <div class="row">
+                <div class="col-12 form-group">
+                    <label for="attachments" class="form-label font-weight-bold">Attachments:</label>
+                    {{ form.attachments }}
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary px-5 py-2 mt-3" style="font-size: 1rem; font-weight: bold;">Submit Ticket</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card-footer text-center mt-4">
+        <ul class="list-unstyled">
+          <li><a href="{% url 'ticket_list' %}" class="btn btn-outline-primary"><i class="fas fa-list"></i> Your Tickets</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

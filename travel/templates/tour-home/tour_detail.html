@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-8">
+    <!-- Photos Section -->
+    <div class="row">
+        <div class="col-md-8">
+            <div id="tourCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for photo in tour.photos.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ photo.image.url }}" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="Tour Photo">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#tourCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#tourCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Contact Information Section -->
+        <div class="col-md-4">
+            <h3 class="fw-bold mb-4 text-primary">Contact Information</h3>
+            <ul class="list-unstyled">
+                <li class="fw-bold mb-2">Need Help?</li>
+                <li class="mb-2">You can also send your enquiry for this tour.</li>
+                <li><button  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inquiryModal-{{ tour.id }}">Click here to send enquiry</button></li>
+            
+                <li class="mt-4">
+                    <h5 class="mb-1">Call Us:</h5>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-telephone-fill me-2" style="font-size: 20px;"></i> <span class="fs-1">+91-11-41516500</span>
+                    </div>
+                </li>
+            </ul>
+            
+        </div>
+    </div>
+
+    <!-- Tour Details Section -->
+    <div class="tour-details d-flex flex-wrap mt-4 mb-4">
+        <p class="me-4 mb-2">
+            <strong style="    color: #FFFEFE;
+            background-color: #FE7A15;
+            border-color: #FE7A15;
+        " class="btn toggle-content" data-target="description">Description</strong>
+        </p>
+        <p class="me-4 mb-2">
+            <strong style="    color: #FFFEFE;
+            background-color: #FE7A15;
+            border-color: #FE7A15;
+        " class="btn toggle-content" data-target="itinerary">Itinerary</strong>
+        </p>
+        <p class="me-4 mb-2">
+            <strong style="    color: #FFFEFE;
+            background-color: #FE7A15;
+            border-color: #FE7A15;
+        " class="btn  toggle-content" data-target="includes">Includes</strong>
+        </p>
+        <p class="me-4 mb-2">
+            <strong style="    color: #FFFEFE;
+            background-color: #FE7A15;
+            border-color: #FE7A15;
+        " class="btn  toggle-content" data-target="excludes">Excludes</strong>
+        </p>
+        <p class="me-4 mb-2">
+            <strong style="    color: #FFFEFE;
+            background-color: #FE7A15;
+            border-color: #FE7A15;
+        " class="btn  toggle-content" data-target="cancellation-policy">Cancellation</strong>
+        </p>
+        <p class="me-4 mb-2">
+            <strong style="    color: #FFFEFE;
+            background-color: #FE7A15;
+            border-color: #FE7A15;
+        " class="btn toggle-content" data-target="notes">Notes</strong>
+        </p>
+        {% if tour.details.custom_fields.all %}
+            {% for custom_field in tour.details.custom_fields.all %}
+                <p class="me-4 mb-2">
+                    <strong style="    color: #FFFEFE;
+                    background-color: #FE7A15;
+                    border-color: #FE7A15;
+                " class="btn  toggle-content" data-target="custom-field-{{ forloop.counter }}">{{ custom_field.label }}</strong>
+                </p>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Hidden content, initially not displayed -->
+    <div id="description" class="tour-details-content" style="display:block;">
+        <div class="card shadow-lg mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-primary">Description</h5>
+                <p><strong>Tour:</strong> {{ tour.short_description}}</p>
+                <p><strong>Tour Type:</strong> {{ tour.tour_type.name }}</p>
+                <p><strong>Long Description:</strong> {{ tour.long_description }}</p>
+                <p><strong>Category:</strong> {{ tour.category.name }}</p>
+            </div>
+        </div>
+    </div>
+    <div id="itinerary" class="tour-details-content" style="display:none;">
+        <div class="card shadow-lg mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-primary">Itinerary</h5>
+                <p>{{ tour.details.itinerary|safe }}</p>
+            </div>
+        </div>
+    </div>
+    <div id="includes" class="tour-details-content" style="display:none;">
+        <div class="card shadow-lg mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-primary">Includes</h5>
+                <p>{{ tour.details.includes|safe }}</p>
+            </div>
+        </div>
+    </div>
+    <div id="excludes" class="tour-details-content" style="display:none;">
+        <div class="card shadow-lg mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-primary">Excludes</h5>
+                <p>{{ tour.details.excludes|safe }}</p>
+            </div>
+        </div>
+    </div>
+    <div id="cancellation-policy" class="tour-details-content" style="display:none;">
+        <div class="card shadow-lg mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-primary">Cancellation Policy</h5>
+                <p>{{ tour.details.cancellation_policy|safe}}</p>
+            </div>
+        </div>
+    </div>
+    <div id="notes" class="tour-details-content" style="display:none;">
+        <div class="card shadow-lg mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-primary">Notes</h5>
+                <p>{{ tour.details.notes|safe }}</p>
+            </div>
+        </div>
+    </div>
+    {% if tour.details.custom_fields.all %}
+        {% for custom_field in tour.details.custom_fields.all %}
+            <div id="custom-field-{{ forloop.counter }}" class="tour-details-content" style="display:none;">
+                <div class="card shadow-lg mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ custom_field.label }}</h5>
+                        <p>{{ custom_field.value|safe }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="mt-4" >
+        <h5 class="text-primary">Price Details</h5>
+        {% if tour.prices.exists %}
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr style="color: black;">
+                        <th>Class</th>
+                        <th>Min-Pax</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Price Options</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for price in tour.prices.all %}
+                        <tr style="color: black;">
+                            <td >{{ price.t_class.name }}</td>
+                            <td>{{ price.no_of_pax }}</td>
+                            <td>{{ price.validity_date_from }}</td>
+                            <td>{{ price.validity_date_to }}</td>
+                            <td>
+                                <select class="form-select" name="price_option" form="form_{{ price.id }}">
+                                    <option value="adult_price" >Adult: Rs {{ price.adult_price }}</option>
+                                    <option value="twin_sharing_price">Twin Sharing: Rs {{ price.twin_sharing_price }}</option>
+                                  <!--  <option value="extra_adult_price">Extra Adult: ${{ price.extra_adult_price }}</option>-->
+                                  
+                                </select>
+                              
+                            </td>
+                            <td>
+                                <form id="form_{{ price.id }}" method="post" action="{% url 'add_to_cart' tour.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="price_id" value="{{ price.id }}">
+                                    <button type="submit" class="btn btn-primary mt-2">Book Now</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No price details available for this tour.</p>
+        {% endif %}
+    </div>
+    
+
+   
+
+    <!-- Inquiry Modal -->
+    <div class="modal fade" id="inquiryModal-{{ tour.id }}" tabindex="-1" aria-labelledby="inquiryModalLabel-{{ tour.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="inquiryModalLabel-{{ tour.id }}">Change Tour Dates</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{% url 'view_tour' tour.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <h2>Send Inquiry for {{ tour.name }}</h2>
+                    
+                        
+                        
+                        <div class="mb-3">
+                            <label for="from_date" class="form-label">From Date</label>
+                            <input type="date" class="form-control" id="from_date" name="from_date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="to_date" class="form-label">To Date</label>
+                            <input type="date" class="form-control" id="to_date" name="to_date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                        </div>
+                        <p class="text-muted" style="font-size: small;">We'll contact you shortly to confirm the changes.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="send_inquiry" class="btn btn-primary btn-lg w-100 mt-3" style="font-weight: bold;">Send Inquiry</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == "success" %}
+                <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p style="color: rgb(0, 177, 0);">Your inquiry has been successfully sent! We'll contact you shortly.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    
+</div>
+
+<script>
+    // Get all the elements with class 'toggle-content'
+    const toggleElements = document.querySelectorAll('.toggle-content');
+    
+    // Loop through each toggle element and add a click event listener
+    toggleElements.forEach(element => {
+        element.addEventListener('click', function() {
+            // Get the target id from the data-target attribute
+            const targetId = this.getAttribute('data-target');
+            
+            // Get the corresponding content div by ID
+            const contentDiv = document.getElementById(targetId);
+            
+            // If the target div is currently hidden, show it and hide others
+            if (contentDiv.style.display === 'none' || contentDiv.style.display === '') {
+                // Show the clicked content div
+                contentDiv.style.display = 'block';
+
+                // Hide all other content sections except the clicked one
+                const allContentDivs = document.querySelectorAll('.tour-details-content');
+                allContentDivs.forEach(div => {
+                    if (div !== contentDiv) {
+                        div.style.display = 'none';
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+{% if messages %}
+{% for message in messages %}
+    {% if message.tags == "success" %}
+        // Display the success modal using JavaScript
+       <script>window.onload = function() {
+            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        };
+    </script> 
+    {% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}

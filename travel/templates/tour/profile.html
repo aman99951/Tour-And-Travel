@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}
+User Profile
+{% endblock %}
+
+{% block content %}
+<div class="container mt-8 profile-page mb-4">
+    
+
+    <!-- Navigation Section -->
+    <nav class="mb-4">
+        <ul class="nav nav-pills justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'order_page'%}">Orders</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'invoice_page' %}">Invoices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'create_ticket' %}">HelpDesk</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_chat_request' %}">Live Chat</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Messages Section -->
+    {% if messages %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            {% for message in messages %}
+                <p class="mb-0">{{ message }}</p>
+            {% endfor %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <!-- User Information Section -->
+        <div class="col-lg-5 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-center">
+                    <h2 class="h5 mb-0" style="color: white;">User Information</h2>
+                </div>
+                <div class="card-body" style="color: black;">
+                    <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editable Address Form -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-header text-center" style="color: #FFFEFE; background-color: #FE7A15;">
+                    <h2 class="h5 mb-0"  style="color: #FFFEFE; ">Edit Address</h2>
+                </div>
+                <div class="card-body" style="color: black;">
+                    <form method="post" action="{% url 'profile_view' %}">
+                        {% csrf_token %}
+                        <p class="text-center">Billing Address*</p>
+                        <div class="row mb-3">
+                            <!-- Address -->
+                            <div class="col-md-12">
+                                <label for="id_address" class="form-label">Address</label>
+                                {{ form.address }}
+                            </div>
+                        </div>
+                    
+                        <!-- First Row: City and Postal Code -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_city" class="form-label">City</label>
+                                {{ form.city }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_postal_code" class="form-label">Postal Code</label>
+                                {{ form.postal_code }}
+                            </div>
+                        </div>
+                    
+                        <!-- Second Row: Country and Country of Passport -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_country" class="form-label">Country</label>
+                                {{ form.country }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_country_of_passport" class="form-label">Country of Passport</label>
+                                {{ form.country_of_passport }}
+                            </div>
+                        </div>
+                    
+                        <!-- Third Row: Landline Number and Company Address -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_landline_number" class="form-label">Landline Number</label>
+                                {{ form.landline_number }}
+                            </div>
+                            <hr>  
+                            <p class="text-center">Company Address (Optional)</p>
+                            <div class="row mb-3">
+                                <!-- Address -->
+                                <div class="col-md-12">
+                                    <label for="id_address" class="form-label">Company Address</label>
+                                    {{ form.company_address }}
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- Fourth Row: Company City and Company State -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_company_city" class="form-label">Company City</label>
+                                {{ form.company_city }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_company_state" class="form-label">Company State</label>
+                                {{ form.company_state }}
+                            </div>
+                        </div>
+                    
+                        <!-- Fifth Row: Company Postal Code and Company Country -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_company_postal_code" class="form-label">Company Postal Code</label>
+                                {{ form.company_postal_code }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_company_country" class="form-label">Company Country</label>
+                                {{ form.company_country }}
+                            </div>
+                        </div>
+                    
+                        <!-- Save Button -->
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-success btn-lg mt-3">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    form .row {
+    align-items: center;
+}
+
+form label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+form button {
+    width: auto;
+    padding: 10px 20px;
+}
+
+</style>
+{% endblock %}

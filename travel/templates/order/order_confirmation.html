@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-8">
+    <div class="card shadow-sm border-light p-4">
+        <h4 class="card-title text-center text-primary font-weight-bold mb-4">Order Confirmation</h4>
+
+        <!-- Order Confirmation Message -->
+        <div class="text-center mb-4">
+            <p>Thank you for your purchase, <strong>{{ order.user.username }}</strong>!</p>
+            <p>Your order ID is: <strong>{{ order.id }}</strong></p>
+            <p class="h5 text-success">Total Price: ₹{{ total_price }}</p>
+        </div>
+
+        <!-- Order Items -->
+        <h5 class="mb-3 text-muted">Order Items:</h5>
+        <div class="list-group mb-4">
+            {% for item in order.items.all %}
+            <div class="list-group-item d-flex align-items-center">
+                <div class="row w-100">
+                    <div class="col-md-8">
+                        <h6 class="font-weight-bold">{{ item.tour.short_description }} - <small class="text-muted">{{ item.t_class.name }}</small></h6>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p class="mb-1"><strong>Price per Person:</strong> ₹
+                                    {% if item.adult_price %}
+                                        {{ item.adult_price }}
+                                    {% elif item.twin_sharing_price %}
+                                        {{ item.twin_sharing_price }}
+                                    {% elif item.extra_price %}
+                                        {{ item.extra_price }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="mb-1"><strong>Quantity:</strong> {{ item.quantity }}</p>
+                            </div>
+                            <div class="col-12">
+                                <p class="text-primary mb-1"><strong>Total:</strong> ₹{{ item.total_price }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        {% if item.tour.photos.exists %}
+                            <img src="{{ item.tour.photos.first.image.url }}" class="img-fluid rounded" alt="Tour Image" style="width: 80px; height: 80px; object-fit: cover;"/>
+                        {% else %}
+                            <p>No image available</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Return to Home Button -->
+        <div class="text-center">
+            <a href="/" class="btn btn-success btn-lg">Return to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

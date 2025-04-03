@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-8 mb-3">
+    <nav class="mb-4">
+        <ul class="nav nav-pills justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link " href="{%url 'profile_view'%}">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'order_page'%}">Orders</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'invoice_page' %}">Invoices</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">HelpDesk</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Live Chat</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-9">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="m-4">
+                    <h4 class="card-title mb-4 text-center font-weight-bold text-primary" style="font-size: 2rem; letter-spacing: 2px;">Order Details</h4>
+
+                    {% if order %}
+                        <div class="order-card mb-4 p-4 border rounded" style="color: black;">
+                            <h5 class="font-weight-bold">Order #{{ order.id }} - {{ order.status }}</h5>
+                            <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+                            <p><strong>Total Price:</strong> ₹{{ order.total_price }}</p>
+
+                            <!-- Order Status Details -->
+                            <p><strong>Status:</strong> {{ order.status }}</p>
+
+                            <!-- Shipping Address -->
+                            
+
+                            <h6 class="mt-4 font-weight-bold">Order Items:</h6>
+                            <table class="table">
+                                <thead style="color: black;">
+                                    <tr>
+                                        <th>Tour</th>
+                                        <th>Class</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Photos</th>
+                                    </tr>
+                                </thead>
+                                <tbody style="color: black;">
+                                    {% for item in order.items.all %}
+                                    <tr>
+                                        <td>{{ item.tour.short_description }}</td>
+                                        <td>{{ item.t_class.name }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>₹{{ item.total_price }}</td>
+
+                                        <!-- Photos Link -->
+                                        <td>
+                                            {% if item.tour.photos.exists %}
+                                <img src="{{ item.tour.photos.first.image.url }}" class="border rounded-circle me-3" style="width: 90px; height: 90px; object-fit: cover;" />
+                                {% endif %}
+
+                                              
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if user_profile.address or user_profile.city or user_profile.postal_code or user_profile.country %}
+                            <div class="mt-4" style="color: black;">
+                                <h5 class="text-primary font-weight-bold" style="font-size: 1.3rem;">Billing Address</h5>
+                                <p>{{ user_profile.address }}</p>
+                                <p>{{ user_profile.city }}, {{ user_profile.postal_code }}</p>
+                                <p>{{ user_profile.country }}</p>
+                                {% if user_profile.country_of_passport %}
+                                <p>Country of Passport: {{ user_profile.country_of_passport }}</p>
+                                {% endif %}
+                                {% if user_profile.landline_number %}
+                                <p>Landline: {{ user_profile.landline_number }}</p>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                           
+                            <h6 class="mt-4 font-weight-bold">Additional Information:</h6>
+                            <ul>
+                                <li><strong>Order Created At:</strong> {{ order.created_at }}</li>
+                                
+                            </ul>
+
+                        </div>
+                    {% else %}
+                        <p class="text-center" style="font-size: 1.3rem; color: #E74C3C; font-weight: bold;">Order not found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
