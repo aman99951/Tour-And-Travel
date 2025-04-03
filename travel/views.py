@@ -97,10 +97,9 @@ def get_tour_type(request, tour_id):
     except Tour.DoesNotExist:
         return JsonResponse({'error': 'Tour not found'}, status=404)
 
-
+from django.db.models import Count, Q, F, DecimalField, Value, ExpressionWrapper
+from django.db.models.functions import Least, Coalesce
 def tour_home(request):
-    from django.db.models import Min, F, ExpressionWrapper, DecimalField
-
     # Retrieve categories with the count of active tours
     categories = TourCategory.objects.annotate(
         product_count=Count('tours', filter=Q(tours__active=True))
@@ -133,21 +132,14 @@ def tour_home(request):
     elif filter_type == 'nights' and number:
         tours = tours.filter(number_of_nights=number)
 
-    # Annotate tours with minimum price across fields
+    # Annotate tours with minimum price across multiple fields while handling NULL values
     tours = tours.annotate(
-        min_price=Min(
-            ExpressionWrapper(
-                F('prices__adult_price'), output_field=DecimalField()
-            ),
-            ExpressionWrapper(
-                F('prices__twin_sharing_price'), output_field=DecimalField()
-            ),
-            ExpressionWrapper(
-                F('prices__extra_adult_price'), output_field=DecimalField()
-            )
+        min_price=Least(
+            Coalesce(ExpressionWrapper(F('prices__adult_price'), output_field=DecimalField()), Value(9999999, output_field=DecimalField())),
+            Coalesce(ExpressionWrapper(F('prices__twin_sharing_price'), output_field=DecimalField()), Value(9999999, output_field=DecimalField())),
+            Coalesce(ExpressionWrapper(F('prices__extra_adult_price'), output_field=DecimalField()), Value(9999999, output_field=DecimalField()))
         )
     )
-
     # Pagination
     paginator = Paginator(tours, 15)  # Show 15 tours per page
     page_number = request.GET.get('page')
@@ -162,7 +154,6 @@ def tour_home(request):
         'filter_type': filter_type,
         'number': number,
     })
-
 
 def view_tour(request, pk):
     # Get the tour object based on the primary key
