@@ -26,8 +26,11 @@ SECRET_KEY = 'django-insecure-ibnb-ds#@su5kz5)-*2nre@*25vuh_a_jtjlfaaq4t=l0xaq8z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = [
+    "tour-and-travel-8wty.onrender.com",
+    "127.0.0.1",  # Local development
+    "localhost",
+]
 
 # Application definition
 
@@ -175,6 +178,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://tour-and-travel-8wty.onrender.com",  # Your deployed domain
+    "https://www.tour-and-travel-8wty.onrender.com",  # (if using www subdomain)
+]
 
 RAZORPAY_KEY_ID = 'your_razorpay_key_id'
 RAZORPAY_SECRET = 'your_razorpay_secret'
@@ -188,7 +195,7 @@ PAYTM_CHANNEL_ID = 'WEB'  # or 'WAP' based on your requirements
 PAYTM_INDUSTRY_TYPE_ID = 'your_industry_type'  # For example: 'Retail'
 
 
-PHONEPE_MERCHANT_KEY = "e02ee5cb-a528-4bbb-8b35-003315acf8cd"
-PHONEPE_MERCHANT_ID = "M22KWO318OILS"
-SALT_INDEX = "1"
-PHONEPE_INITIATE_PAYMENT_URL = "https://api-preprod.phonepe.com/v1/payment/initiate"
+PHONEPE_MERCHANT_KEY = ""
+PHONEPE_MERCHANT_ID = ""
+SALT_INDEX = ""
+PHONEPE_INITIATE_PAYMENT_URL = ""
