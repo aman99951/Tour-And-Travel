@@ -27,9 +27,7 @@ SECRET_KEY = 'django-insecure-ibnb-ds#@su5kz5)-*2nre@*25vuh_a_jtjlfaaq4t=l0xaq8z
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "tour-and-travel-8wty.onrender.com",
-    "127.0.0.1",  # Local development
-    "localhost",
+    '*'
 ]
 
 # Application definition
@@ -179,9 +177,8 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://tour-and-travel-8wty.onrender.com",  # Your deployed domain
-    "https://www.tour-and-travel-8wty.onrender.com",  # (if using www subdomain)
-]
+    "*"
+   ]
 
 RAZORPAY_KEY_ID = 'your_razorpay_key_id'
 RAZORPAY_SECRET = 'your_razorpay_secret'
